@@ -34,10 +34,10 @@ document.addEventListener('keydown', function(e) {
             createBall({x: 50, y: 400}, {x: 0.4, y : -0.4});
             break;
         case '2':
-            createBall({x: 600, y: 0}, {x: 0.5, y : 0.5}, {x: 1, y: 1});
+            createBall({x: 600, y: 0}, {x: 0.5, y : 0.5});
             break;
         case '3':
-            createMass(30);
+            createBall({x: 800, y: 300}, {x: 0.0, y : 0.5});
             break;
         case '4':
             createMass(40);
