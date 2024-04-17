@@ -4,13 +4,13 @@ MassList = [];
 
 
 document.addEventListener('click', function() {
-    createBall({x: 500, y: 0}, 0.5, {x: 1, y: 1});
+    createBall({x: 500, y: 0}, {x: 0.5, y : 0.5}, {x: 1, y: 1});
 });
 
 
 document.addEventListener('keydown', function(e) {
     if (e.key === 'q') {
-        createMass(200);
+        createMass(50);
     }
     if (e.key === 'c') {
         console.log("c");
@@ -27,6 +27,39 @@ document.addEventListener('keydown', function(e) {
                 console.log("block");
             }
         }
+    }
+
+    switch (e.key) {
+        case '1':
+            createBall({x: 50, y: 400}, {x: 0.4, y : -0.4});
+            break;
+        case '2':
+            createBall({x: 600, y: 0}, {x: 0.5, y : 0.5}, {x: 1, y: 1});
+            break;
+        case '3':
+            createMass(30);
+            break;
+        case '4':
+            createMass(40);
+            break;
+        case '5':
+            createMass(50);
+            break;
+        case '6':
+            createMass(60);
+            break;
+        case '7':
+            createMass(70);
+            break;
+        case '8':
+            createMass(80);
+            break;
+        case '9':
+            createMass(90);
+            break;
+        case '0':
+            createMass(100);
+            break;
     }
 });
 
@@ -63,17 +96,17 @@ function createMass(bodymass) {
 }
 
 
-function createBall(position, speed, direction) {
+function createBall(position, speed) {
     var screen = document.getElementById('screen');
     var ball = document.createElement('div');
     var top = ball.style.top = '25%';
 
     ball.className = 'ball';
     screen.appendChild(ball);
-    physic(ball, position, speed, direction);
+    physic(ball, position, speed);
 }
 
-function physic(item, position, speed, direction) {
+function physic(item, position, speed) {
     screenWidth = document.getElementById('screen').offsetWidth;
     screenHeight = document.getElementById('screen').offsetHeight;
 
@@ -81,13 +114,13 @@ function physic(item, position, speed, direction) {
     // if it reach the right end of the screen, delete it
     var x = position.x;
     var y = position.y;
-    var speed = speed;
-    var BallMass = 100;
-    
-    var gravity = 0;
-    var GravityInfluenceX = 1;
-    var GravityInfluenceY = 1;
+    var speedX = speed.x;
+    var speedY = speed.y;
+    var BallMass = 20;
     var influenceIntensity = 0;
+    
+    var GravityInfluenceX = 0.0;
+    var GravityInfluenceY = 0.0;
     var influenceZone = 0;
 
 
@@ -104,94 +137,99 @@ function physic(item, position, speed, direction) {
                 //console.log("mass : " + element.mass + " x : " + element.x + " y : " + element.y);
                 //console.log("x : " + x + " y : " + y);
                 //console.log("x : " + element.x + " y : " + element.y);
+
+                var angleX = -1
+                var angleY = -1
                 if ( x < element.x ) {
                     if ( y < element.y ) {
                         cadran = 1;
+                        angleY = 1;
+                        angleX = 1;
+
                     } else {
                         cadran = 3;
+                        angleY = -1;
+                        angleX = 1;
                     }
 
                 } else {
                     if ( y < element.y ) {
                         cadran = 2;
+                        angleY = 1;
+                        angleX = -1;
                     } else {
                         cadran = 4;
+                        angleY = -1;
+                        angleX = -1;
                     }
                 }
 
-                var angle = Math.atan2(element.y - y, element.x - x) * 180/Math.PI;
-                GravityInfluenceX = Math.cos(angle);
-                GravityInfluenceY = Math.sin(angle);
+                // pythagore
+
+                var deltaX = x - element.x;
+                var deltaY = y - element.y;
+                var distance = Math.sqrt((deltaX) * (deltaX) + (deltaY) * (deltaY));
 
 
-
-                var distance = Math.sqrt((element.x - x) * (element.x - x) + (element.y - y) * (element.y - y));
-                //console.log("x : " + GravityInfluenceX + " y : " + GravityInfluenceY);
-                //console.log("angle : " + angle);
-                //console.log("cadran : " + cadran);
-                
-                influenceZone = (BallMass / 2) + element.mass;
-
-                if (distance / influenceZone < 1) {
-                    influenceIntensity = (influenceZone%distance)/100;
-                    //console.log("influenceIntensity : " + influenceIntensity);
+                console.log("deltaX : " + deltaX);
+                // debugger si deltaX = 0
+                if (deltaX <= 1 && deltaX >= -1) {
+                    
+                    deltaX = 1;
+                }
+                if (deltaY <= 1 && deltaY >= -1) {
+                    deltaY = 1;
                 }
 
 
+
+                var modifier = 20;
+
+
+                // l'influence doit varier en fonction de la distance X et Y elle ne doit pas etre la meme pour les deux
+                
+                GravityInfluenceX = BallMass*element.mass / (((distance * distance) *angleX) * modifier);
+                GravityInfluenceY = BallMass*element.mass / (((distance * distance) *angleY) * modifier);
+
+                console.log("deltaX : " + deltaX + " deltaY : " + deltaY);
+                console.log(GravityInfluenceX);
+                console.log(GravityInfluenceY);
+                speedX += GravityInfluenceX;
+                speedY += GravityInfluenceY;
+
+
+
+                x += speedX
+                y += speedY
+
             });
+            //Note
+                // influence of the gravity
+                // elle depend de la distance entre la balle et la mass selon la fiderence entre la masse des deux corps
+                // deplacement en X = 
 
-            // influence of the gravity
-            // elle depend de la distance entre la balle et la mass selon la fiderence entre la masse des deux corps
-            // deplacement en X = 
-            
-            
-            // dans quel cadran se trouve la balle
-            // 1 : en haut a gauche
-            // 2 : en haut a droite
-            // 3 : en bas a gauche
-            // 4 : en bas a droite
+
+                // dans quel cadran se trouve la balle
+                // 1 : en haut a gauche
+                // 2 : en haut a droite
+                // 3 : en bas a gauche
+                // 4 : en bas a droite
         
-
-
-
-
-            
-
-            
-
-
-
-            
-
-            if (influenceIntensity == 0) {
-                x += speed + direction.x ;
-                y += speed + direction.x ;
-
-            } else {
-
-                x += speed * (direction.x + ((GravityInfluenceX * influenceIntensity)*10));
-                console.log(((GravityInfluenceX * influenceIntensity)*10))
-                y += speed * (direction.x + ((GravityInfluenceY * influenceIntensity)*10));
-            }
-            
 
         } else
         {
-            x += speed * direction.x * GravityInfluenceX ;
-            y += speed * direction.x * GravityInfluenceY ;
+            x += speedX;
+            y += speedY;
         }
 
-        //console.log("GravityInfluenceX : " + GravityInfluenceX + " GravityInfluenceY : " + GravityInfluenceY);
-        console.log("influenceIntensity : " + influenceIntensity);
         item.style.left = x + 'px';
         item.style.top = y  + 'px';
-        //console.log(" x : "+ x +" y: " + y);
 
         if (x > screenWidth || x < 0 || y > screenHeight || y < 0) {
             clearInterval(interval);
             item.remove();
         }
-    }, 1);
+    }, 10);
 }
 
 
