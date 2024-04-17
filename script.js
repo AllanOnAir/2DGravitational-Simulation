@@ -2,6 +2,8 @@ ballcount = 0;
 
 MassList = [];
 
+var time = 10;
+var paused = false;
 
 document.addEventListener('click', function() {
     createBall({x: 500, y: 0}, {x: 0.5, y : 0.5}, {x: 1, y: 1});
@@ -9,56 +11,50 @@ document.addEventListener('click', function() {
 
 
 document.addEventListener('keydown', function(e) {
-    if (e.key === 'q') {
-        createMass(50);
-    }
-    if (e.key === 'c') {
-        console.log("c");
-        var elems = document.getElementsByClassName('cadran');
-        if (document.getElementById("A").style.display === 'block') {
-            for (var i = 0; i < elems.length; i++ ) {
-                elems[i].style.display = "none";
-                console.log("none");
-            }
-        }
-        else {
-            for (var i = 0; i < elems.length; i++ ) {
-                elems[i].style.display = "block";
-                console.log("block");
-            }
-        }
-    }
-
     switch (e.key) {
+        case 'q':
+            createMass(50);
+            break;
+
+        case 'c':
+            console.log("c");
+            var elems = document.getElementsByClassName('cadran');
+            if (document.getElementById("A").style.display === 'block') {
+                for (var i = 0; i < elems.length; i++ ) {
+                    elems[i].style.display = "none";
+                    console.log("none");
+                }
+            }
+            else {
+                for (var i = 0; i < elems.length; i++ ) {
+                    elems[i].style.display = "block";
+                    console.log("block");
+                }
+            }
+            break;
+
+        case '`':
+            if (paused == true) {
+                time = 10;
+            
+                paused = false;
+                console.log("unpause");
+            } else {
+                time = 10000000000;
+                
+                paused = true;
+                console.log("pause");
+            }
+            break;
+
         case '1':
             createBall({x: 50, y: 400}, {x: 0.4, y : -0.4});
-            break;
+            break;            
         case '2':
             createBall({x: 600, y: 0}, {x: 0.5, y : 0.5});
             break;
         case '3':
             createBall({x: 800, y: 300}, {x: 0.0, y : 0.5});
-            break;
-        case '4':
-            createMass(40);
-            break;
-        case '5':
-            createMass(50);
-            break;
-        case '6':
-            createMass(60);
-            break;
-        case '7':
-            createMass(70);
-            break;
-        case '8':
-            createMass(80);
-            break;
-        case '9':
-            createMass(90);
-            break;
-        case '0':
-            createMass(100);
             break;
     }
 });
@@ -197,11 +193,6 @@ function physic(item, position, speed) {
                 speedX += GravityInfluenceX;
                 speedY += GravityInfluenceY;
 
-
-
-                x += speedX
-                y += speedY
-
             });
             //Note
                 // influence of the gravity
@@ -216,11 +207,11 @@ function physic(item, position, speed) {
                 // 4 : en bas a droite
         
 
-        } else
-        {
-            x += speedX;
-            y += speedY;
         }
+        
+        x += speedX;
+        y += speedY;
+        
 
         item.style.left = x + 'px';
         item.style.top = y  + 'px';
@@ -229,7 +220,7 @@ function physic(item, position, speed) {
             clearInterval(interval);
             item.remove();
         }
-    }, 10);
+    }, time);
 }
 
 
